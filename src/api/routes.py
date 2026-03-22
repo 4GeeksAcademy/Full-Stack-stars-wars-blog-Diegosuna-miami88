@@ -64,24 +64,60 @@ def get_all_users(users):
     return jsonify(users.serialize()), 200
     
 @api.route('/users/<int:user_id>/favorites', methods=['GET'])
-def add_user_favorites(user_id):
-    pass
+def get_user_favorites(user_id):
+    found_user = db.session.get(User, user_id)
+    if found_user is None:
+        return jsonify({"msg":" User does not exist"}), 404
+    serialized_user = found_user.serialized()
+    return jsonify({
+        "user_id": serialized_user.id,
+        "favorite_characters": serialized_user.favorite_characters,
+        "favorite_planets": serialized_user.favorite_planets,
+    }),
+    
 
 @api.route('/favorite/planet/<int:planet_id>', methods=['POST'])
 def add_favorite_planet(planet_id):
-    pass
+    body = request.json
+    found_user = db.session.get(User, body["user_id"])
+    new_fave_planet = db.session.get(Planet, planet_id)
+    if found_user is None or new_fave_planet is None:
+        return jsonify ({"planet or user not found"}), 404
+    found_user.favorite_planets.append(new_fave_planet)
+    db.sesion.commit()
+    serialized_user = found_user.serialized()
+    return jsonify ({"favorite_planets": serialized_user.favorite_planets}), 200
+    
 
 @api.route('/favorite/planet/<int:planet_id>', methods=['DELETE'])
 def delete_favorite_planet(planet_id):
+
     pass
 
 @api.route('/favorite/people/<int:people_id>', methods=['POST'])
 def add_favorite_person(people_id):
-    pass
+    body = request.json
+    found_user = db.session.get(User, body["user_id"])
+    new_fave_person = db.session.get(Character, people_id)
+    if found_user is None or new_fave_person is None:
+        return jsonify ({"person or user not found"}), 404
+    found_user.favorite_characters.append(new_fave_person)
+    db.sesion.commit()
+    serialized_user = found_user.serialized()
+    return jsonify ({"favorite_characters": serialized_user.favorite_characters}), 200
 
 @api.route('/favorite/people/<int:people_id>', methods=['DELETE'])
 def delete_favorite_person(people_id):
-    pass
+    body = request.json
+    found_user = db.session.get(User, body["user_id"])
+    delete_fave_person = db.session.get(Character, people_id)
+    if found_user is None or delete_fave_person is None:
+        return jsonify ({"person or user not found"}), 404
+    found_user.favorite_characters.remove(delete_fave_person)
+    db.sesion.commit()
+    serialized_user = found_user.serialized()
+    return jsonify ({"favorite_characters": serialized_user.favorite_characters}), 200
+    
 
 
 #@api.route('/users/favorites', methods=["GET"])

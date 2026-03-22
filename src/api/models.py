@@ -54,12 +54,13 @@ class Character(db.Model):
             "id": self.id,
             "name":self.name,
             "age": self.age,
-            "planet_of_origin": self.planet_of_origin.serialize
+            "planet_of_origin": self.planet_of_origin
             
         }
 
 class Planet(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
+    #name_planet: Mapped[str] = mapped_column(String(120))
     density: Mapped[str] = mapped_column(String(120))
     population: Mapped[str] = mapped_column(String(120))
     favorited_by: Mapped[List["User"]] = relationship(
@@ -69,6 +70,7 @@ class Planet(db.Model):
     def serialize(self):
          return {
             "id": self.id,
+            #"name_planet": self.name_planet,
             "density": self.density,
             "population": self.population 
         }
