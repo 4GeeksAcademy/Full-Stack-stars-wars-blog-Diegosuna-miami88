@@ -22,6 +22,11 @@ def handle_hello():
 
     return jsonify(response_body), 200
 
+#@app.route("/token", methods=["POST"])
+#def create_token():
+    username = request.json.get("username", None)
+    password = request.json.get("password", None)
+
 @api.route('/people', methods=['GET'])
 def get_all_characters():
     all_people = db.session.execute(select(Character)).scalars().all()
@@ -91,8 +96,17 @@ def add_favorite_planet(planet_id):
 
 @api.route('/favorite/planet/<int:planet_id>', methods=['DELETE'])
 def delete_favorite_planet(planet_id):
+    body = request.json
+    found_user = db.session.get(User, body["user_id"])
+    delete_fave_planet = db.session.get(Character, planet_id)
+    if found_user is None or delete_fave_planet is None:
+        return jsonify ({"person or user not found"}), 404
+    found_user.favorite_planet.remove(delete_fave_planet)
+    db.sesion.commit()
+    serialized_user = found_user.serialized()
+    return jsonify ({"favorite_planets": serialized_user.favorite_planets}), 200
 
-    pass
+    
 
 @api.route('/favorite/people/<int:people_id>', methods=['POST'])
 def add_favorite_person(people_id):
