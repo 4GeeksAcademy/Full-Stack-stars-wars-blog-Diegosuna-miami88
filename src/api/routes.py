@@ -6,6 +6,8 @@ from api.models import db, User, Character, Planet
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from sqlalchemy import select
+from flask_jwt_extended import create_access_token
+
 
 api = Blueprint('api', __name__)
 
@@ -26,6 +28,18 @@ def handle_hello():
 #def create_token():
     username = request.json.get("username", None)
     password = request.json.get("password", None)
+
+@api.route("/token", methods=["POST"])
+def create_token():
+    body = request.json
+    user = User.query.filter_by(
+        email = body["email"], password=body["password"]).first()
+    
+    if user is None:
+        access_token = create_access_token(identify=str(user.id))
+        return jsonify({"token": access_token, "user_id": user.id, "email": user.email}), 200
+    
+
 
 @api.route('/people', methods=['GET'])
 def get_all_characters():
@@ -68,7 +82,7 @@ def get_all_users(users):
         return jsonify({"msg":" User deos not exist"}), 404
     return jsonify(users.serialize()), 200
     
-@api.route('/users/<int:user_id>/favorites', methods=['GET'])
+@api.route('/users/protected/favorites', methods=['GET'])
 def get_user_favorites(user_id):
     found_user = db.session.get(User, user_id)
     if found_user is None:
@@ -134,23 +148,4 @@ def delete_favorite_person(people_id):
     
 
 
-#@api.route('/users/favorites', methods=["GET"])
-#def get_all_favorites(favorites):
- #   favorite = db.session.get(favorites)
-  #  if favorite is None:
-   #     return jsonify({"msg": "Favorite does not exist"}), 404
-    #return jsonify(favorite.serialize()),200
-    
-
-
-
-#@api.route('/favorite/people/<int:people_id>', methods=['POST'])
-#def add_favorite_person(people_id):
-    #pass
-
-
-
-#@api.route('/favorite/people/<int:people_id>', methods=['DELETE'])
-#def delete_favorite_person(people_id):
-    #pass
 
