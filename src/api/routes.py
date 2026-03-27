@@ -109,7 +109,8 @@ def get_all_users(users):
     if user is None:
         return jsonify({"msg":" User deos not exist"}), 404
     return jsonify(users.serialize()), 200
-    
+
+#   
 @api.route('/users/favorites', methods=['GET'])
 @jwt_required()
 def get_user_favorites(current_user_id):

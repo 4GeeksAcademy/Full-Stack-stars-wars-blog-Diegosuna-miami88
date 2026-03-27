@@ -50,7 +50,7 @@ export const LogIn = () => {
                     </div>
                     <div className="col-3"></div>
                 </div>
-                <button className="btn btn-success" onClick={handleSignUp}>Sign up</button>
+                <button className="btn btn-success" onClick={handleLogin}>Log In</button>
             </div>
         </>
     )
