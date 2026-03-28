@@ -1,4 +1,6 @@
 import { Link } from "react-router-dom";
+import storeReducer from "../store";
+import { StoreProvider } from "../hooks/useGlobalReducer";
 
 export const Navbar = () => {
 
@@ -9,8 +11,25 @@ export const Navbar = () => {
 					<span className="navbar-brand mb-0 h1">React Boilerplate</span>
 				</Link>
 				<div className="ml-auto">
-					<Link to="/demo">
-						<button className="btn btn-primary">Check the Context in action</button>
+					<Link>
+						<div>
+							{
+								store.user ?
+									<button className="btn btn-primary">Sign out</button>
+									:
+									<div>
+										<link to="/Signup">
+											<button className="btn btn-primary">Sign up</button>
+										</link>
+										<link to="/LogIn">
+											<button className="btn btn-primary">Log In</button>
+										</link>
+										<link to="/Private">
+											<button className="btn btn-primary">Private</button>
+										</link>
+									</div>
+							}
+						</div>
 					</Link>
 				</div>
 			</div>

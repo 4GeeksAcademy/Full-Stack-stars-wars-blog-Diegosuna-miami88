@@ -23,7 +23,8 @@ class User(db.Model):
         return {
             "id": self.id,
             "email": self.email,
-            # do not serialize the password, its a security breach
+            "favorite_character": [character.serialize() for character in self.favorite_characters],
+            "favorite_planets": [planet.serialize() for planet in self.favorite_planets]
         }
 
 
